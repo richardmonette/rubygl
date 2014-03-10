@@ -3,6 +3,8 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_opengl.h"
 
+#include <GL/glu.h> 
+
 VALUE RubyGL = Qnil;
 
 void Init_rubygl();
@@ -16,6 +18,7 @@ VALUE method_clear(VALUE self);
 VALUE method_swapBuffers(VALUE self);
 
 VALUE method_drawQuad(VALUE self, VALUE x0, VALUE y0, VALUE x1, VALUE y1, VALUE x2, VALUE y2, VALUE x3, VALUE y3);
+VALUE method_drawTriangles(VALUE self, VALUE vertices, VALUE faces);
 
 VALUE method_getKeyPressed(VALUE self);
 VALUE method_getIsQuit(VALUE self);
@@ -32,6 +35,7 @@ void Init_rubygl() {
 	rb_define_method(RubyGL, "swapBuffers", method_swapBuffers, 0);
 
 	rb_define_method(RubyGL, "drawQuad", method_drawQuad, 8);
+	rb_define_method(RubyGL, "drawTriangles", method_drawTriangles, 2);
 
 	rb_define_method(RubyGL, "getKeyPressed", method_getKeyPressed, 0);
 	rb_define_method(RubyGL, "getIsQuit", method_getIsQuit, 0);
@@ -48,12 +52,15 @@ VALUE method_initGL(VALUE self) {
     glLoadIdentity();
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
-    glClearColor( 0.f, 0.f, 0.f, 1.f );
+	//gluPerspective(60., 1., 0., 1000.);
+	glRotatef(45., 1., 1., 0.);	
+    glClearColor( 0.f, 1.f, 0.f, 1.f );
+	glEnable( GL_DEPTH_TEST );
 	return 0;
 }
 
 VALUE method_clear(VALUE self) {
-	glClear( GL_COLOR_BUFFER_BIT );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	return 0;
 }
 
@@ -68,6 +75,22 @@ VALUE method_drawQuad(VALUE self, VALUE x0, VALUE y0, VALUE x1, VALUE y1, VALUE 
 		glVertex2f( NUM2DBL(x1), NUM2DBL(y1) );
 		glVertex2f( NUM2DBL(x2), NUM2DBL(y2) );
 		glVertex2f( NUM2DBL(x3), NUM2DBL(y3) );
+	glEnd();
+	return 0;
+}
+
+VALUE method_drawTriangles(VALUE self, VALUE vertices, VALUE faces) {
+	int nFaces = RARRAY_LEN(faces);
+	glBegin( GL_TRIANGLES );
+		int i = 0;
+		for (i = 0; i < nFaces; i++) {
+			int faceId = NUM2INT(rb_ary_entry(faces, i)) * 3;
+			glVertex3f( 
+				NUM2DBL(rb_ary_entry(vertices, faceId+0)),
+				NUM2DBL(rb_ary_entry(vertices, faceId+1)),
+				NUM2DBL(rb_ary_entry(vertices, faceId+2)) 
+			);
+		}
 	glEnd();
 	return 0;
 }

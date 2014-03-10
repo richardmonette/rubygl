@@ -1,15 +1,19 @@
 require 'rubygl'
+require 'objmodel'
 
 include RubyGL
 
-initSDL(640, 320, 32)
+initSDL(512, 512, 32)
 initGL()
 
 looping = true
 
+objModel = ObjModel.new('cube.obj')
+
 while looping do
 	clear()
-	drawQuad(-0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5)
+	#drawQuad(-0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5)
+	drawTriangles(objModel.vertices, objModel.faces)
 	swapBuffers()
 	sleep(1.0)
 	keyPressed = getKeyPressed()
