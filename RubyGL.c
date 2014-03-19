@@ -48,13 +48,19 @@ VALUE method_initSDL(VALUE self, VALUE width, VALUE height, VALUE depth) {
 }
 
 VALUE method_initGL(VALUE self) {
+	// Setup a projection
 	glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
-    glMatrixMode( GL_MODELVIEW );
+    gluPerspective(60., 1., 0.01, 100.);
+	// Setup a default viewing
+	glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
-	//gluPerspective(60., 1., 0., 1000.);
-	glRotatef(45., 1., 1., 0.);	
-    glClearColor( 0.f, 1.f, 0.f, 1.f );
+	// Camera position	
+	gluLookAt(2.5, 2.5, 5., 0., 0., 0., 0., 1., 0.);
+	// Rotate the scene
+	glRotatef(45., 1., 1., 0.);
+	// Basic color, depth
+    glClearColor( 0.f, 0.f, 0.f, 0.f );
 	glEnable( GL_DEPTH_TEST );
 	return 0;
 }
@@ -89,6 +95,11 @@ VALUE method_drawTriangles(VALUE self, VALUE vertices, VALUE faces) {
 				NUM2DBL(rb_ary_entry(vertices, faceId+0)),
 				NUM2DBL(rb_ary_entry(vertices, faceId+1)),
 				NUM2DBL(rb_ary_entry(vertices, faceId+2)) 
+			);
+			glColor3f( 
+				NUM2DBL(rb_ary_entry(vertices, faceId+0))+0.5f,
+				NUM2DBL(rb_ary_entry(vertices, faceId+1))+0.5f,
+				NUM2DBL(rb_ary_entry(vertices, faceId+2))+0.5f 
 			);
 		}
 	glEnd();
