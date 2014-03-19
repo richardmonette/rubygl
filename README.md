@@ -13,4 +13,6 @@ ruby extconf.rb
 make
 ```
 
+If the library cannot be loaded, you may need to add your lib path to RUBYLIB.
+
 
