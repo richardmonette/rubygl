@@ -61,7 +61,7 @@ VALUE method_initGL(VALUE self) {
 	glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 	// Camera position	
-	gluLookAt(2.5, 2.5, 5., 0., 0., 0., 0., 1., 0.);
+	gluLookAt(1., 1., 5., 0., 0., 0., 0., 1., 0.);
 	// Rotate the scene
 	glRotatef(45., 1., 1., 0.);
 	// Basic color, depth
@@ -109,17 +109,14 @@ VALUE method_drawQuad(VALUE self, VALUE x0, VALUE y0, VALUE x1, VALUE y1, VALUE 
 VALUE method_drawTriangles(VALUE self, VALUE vertices, VALUE texcoords, VALUE normals, 
 	VALUE verticesIndices, VALUE texcoordsIndices, VALUE normalsIndices) {
 	int nVerticesIndices = RARRAY_LEN(verticesIndices);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glEnable(GL_TEXTURE_2D);
 	glBegin( GL_TRIANGLES );
 		int i = 0;
 		for (i = 0; i < nVerticesIndices; i++) {
 			int vertexId = NUM2INT(rb_ary_entry(verticesIndices, i)) * 3;
 			int texcoordId = NUM2INT(rb_ary_entry(texcoordsIndices, i)) * 2;
 			int normalId = NUM2INT(rb_ary_entry(normalsIndices, i)) * 3;
-			glVertex3f( 
-				NUM2DBL(rb_ary_entry(vertices, vertexId+0)),
-				NUM2DBL(rb_ary_entry(vertices, vertexId+1)),
-				NUM2DBL(rb_ary_entry(vertices, vertexId+2)) 
-			);
 			glTexCoord2f( 
 				NUM2DBL(rb_ary_entry(texcoords, texcoordId+0)),
 				NUM2DBL(rb_ary_entry(texcoords, texcoordId+1))
@@ -129,8 +126,14 @@ VALUE method_drawTriangles(VALUE self, VALUE vertices, VALUE texcoords, VALUE no
 				NUM2DBL(rb_ary_entry(normals, normalId+1)),
 				NUM2DBL(rb_ary_entry(normals, normalId+2))
 			);
+			glVertex3f(
+				NUM2DBL(rb_ary_entry(vertices, vertexId+0)),
+				NUM2DBL(rb_ary_entry(vertices, vertexId+1)),
+				NUM2DBL(rb_ary_entry(vertices, vertexId+2))
+			);
 		}
 	glEnd();
+	glDisable(GL_TEXTURE_2D);
 	return 0;
 }
 

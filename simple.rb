@@ -23,7 +23,7 @@ while looping do
 		objModel.normalsIndices
 	)
 	swapBuffers()
-	sleep(1.0)
+	sleep(1.0/24.0)
 	keyPressed = getKeyPressed()
 	if keyPressed == 13 # escape key code
 		looping = false
