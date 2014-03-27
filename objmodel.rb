@@ -2,7 +2,11 @@ class ObjModel
 	
 	def initialize(filepath)
 		@vertices = []
-		@faces = []
+		@texcoords = []
+		@normals = []
+		@verticesIndices = []
+		@texcoordsIndices = []
+		@normalsIndices = []
 		File.open(filepath, 'r') do |file|
 			while line = file.gets()
 				chunks = line.split()
@@ -10,10 +14,20 @@ class ObjModel
 					@vertices.push(Float(chunks[1]))
 					@vertices.push(Float(chunks[2]))
 					@vertices.push(Float(chunks[3]))
+				elsif chunks[0] == 'vt'
+					@texcoords.push(Float(chunks[1]))
+					@texcoords.push(Float(chunks[2]))
+				elsif chunks[0] == 'vn'
+					@normals.push(Float(chunks[1]))
+					@normals.push(Float(chunks[2]))
+					@normals.push(Float(chunks[3]))
 				elsif chunks[0] == 'f'
-					@faces.push(Integer(chunks[1])-1)
-					@faces.push(Integer(chunks[2])-1)
-					@faces.push(Integer(chunks[3])-1)
+					for i in 1..3
+						x = chunks[i].split('/')
+						@verticesIndices.push(Integer(x[0])-1)
+						@texcoordsIndices.push(Integer(x[1])-1)
+						@normalsIndices.push(Integer(x[2])-1)
+					end
 				end
 			end
 		end
@@ -23,8 +37,24 @@ class ObjModel
 		@vertices
 	end
 
-	def faces
-		@faces
+	def texcoords
+		@texcoords
 	end	
+
+	def normals
+		@normals
+	end
+
+	def verticesIndices
+		@verticesIndices
+	end
+
+	def texcoordsIndices
+		@texcoordsIndices
+	end
+
+	def normalsIndices
+		@normalsIndices
+	end
 
 end
